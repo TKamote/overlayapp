@@ -1,0 +1,13 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Ball Detection collection - for real-time ball detection from Expo app
+    match /ball_detections/{detectionId} {
+      // Anyone can read (for overlay app to display)
+      allow read: if true;
+      // Anyone can write (for Expo app to send detection data)
+      allow write: if true;
+    }
+  }
+}
+

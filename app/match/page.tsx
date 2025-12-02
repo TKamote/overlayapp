@@ -6,6 +6,8 @@ import Image from "next/image";
 import { ArrowLeft } from "lucide-react";
 import WinnerModal from "@/components/WinnerModal";
 import PlayerSelectionModal from "@/components/PlayerSelectionModal";
+import { db } from "@/src/lib/firebase";
+import { doc, onSnapshot } from "firebase/firestore";
 
 const BilliardsBall = ({
   number,
@@ -57,6 +59,8 @@ const LiveMatchPage = () => {
   const [currentTurn, setCurrentTurn] = useState<"player1" | "player2" | null>("player1");
   const [pocketedBalls, setPocketedBalls] = useState<Set<number>>(new Set());
   const [gameMode, setGameMode] = useState<GameMode>("9");
+  const [isAutoMode, setIsAutoMode] = useState(false); // Auto detection mode
+  const [detectedBalls, setDetectedBalls] = useState<number[]>([]); // Balls detected by AI
   
   // Players
   const [player1, setPlayer1] = useState<MatchPlayer>(DEFAULT_PLAYER_1);
@@ -119,6 +123,44 @@ const LiveMatchPage = () => {
     else if (player2Score >= raceTo) setWinner(player2);
   }, [player1Score, player2Score, raceTo, player1, player2]);
 
+  // Firestore listener for ball detection
+  useEffect(() => {
+    if (!isMounted) return;
+
+    const detectionRef = doc(db, 'ball_detections', 'current');
+    const unsubscribe = onSnapshot(detectionRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.data();
+        const detected = data.detectedBalls || [];
+        setDetectedBalls(detected);
+        console.log('🎯 Detection update:', detected);
+      }
+    }, (error) => {
+      console.error('Firestore listener error:', error);
+    });
+
+    return () => unsubscribe();
+  }, [isMounted]);
+
+  // Merge detection with manual state when in Auto mode
+  useEffect(() => {
+    if (!isAutoMode || !isMounted) return;
+
+    // In Auto mode: balls NOT detected = pocketed, balls detected = on table
+    const allBalls = new Set(ballNumbers);
+    const detectedSet = new Set(detectedBalls);
+    
+    // Balls that are pocketed = all balls minus detected balls
+    const autoPocketed = new Set<number>();
+    allBalls.forEach(ball => {
+      if (!detectedSet.has(ball)) {
+        autoPocketed.add(ball);
+      }
+    });
+
+    setPocketedBalls(autoPocketed);
+  }, [detectedBalls, isAutoMode, ballNumbers, isMounted]);
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -132,6 +174,8 @@ const LiveMatchPage = () => {
       if (key === "z") setCurrentTurn("player1");
       if (key === "c") setCurrentTurn("player2");
       if (key === "x") setCurrentTurn(null);
+      // Toggle Auto/Manual mode with 'm' key
+      if (key === "m") setIsAutoMode(prev => !prev);
     };
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
@@ -142,12 +186,24 @@ const LiveMatchPage = () => {
   const handleLiveToggle = () => setIsLive(!isLive);
 
   const handleBallClick = (ballNumber: number) => {
-    setPocketedBalls((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(ballNumber)) newSet.delete(ballNumber);
-      else newSet.add(ballNumber);
-      return newSet;
-    });
+    // In Auto mode, clicking a ball switches to Manual mode for that ball
+    if (isAutoMode) {
+      // Allow manual override even in Auto mode
+      setPocketedBalls((prev) => {
+        const newSet = new Set(prev);
+        if (newSet.has(ballNumber)) newSet.delete(ballNumber);
+        else newSet.add(ballNumber);
+        return newSet;
+      });
+    } else {
+      // Normal manual toggle
+      setPocketedBalls((prev) => {
+        const newSet = new Set(prev);
+        if (newSet.has(ballNumber)) newSet.delete(ballNumber);
+        else newSet.add(ballNumber);
+        return newSet;
+      });
+    }
   };
 
   const handleResetBalls = () => setPocketedBalls(new Set());
@@ -184,22 +240,37 @@ const LiveMatchPage = () => {
             {isLive ? "🔴 LIVE" : "GO LIVE"}
           </button>
 
-          {/* Game Mode Selector (Hidden when live) */}
+          {/* Game Mode Selector & Auto/Manual Toggle (Hidden when live) */}
           {!isLive && (
-            <div className="flex items-center gap-2 bg-black/60 p-1.5 rounded-lg backdrop-blur-sm border border-white/10">
-              {(["9", "10", "15"] as GameMode[]).map((mode) => (
-                <button
-                  key={mode}
-                  onClick={() => setGameMode(mode)}
-                  className={`px-3 py-1 rounded text-sm font-bold transition-colors ${
-                    gameMode === mode 
-                      ? "bg-yellow-500 text-black" 
-                      : "text-zinc-400 hover:text-white hover:bg-white/10"
-                  }`}
-                >
-                  {mode}-Ball
-                </button>
-              ))}
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 bg-black/60 p-1.5 rounded-lg backdrop-blur-sm border border-white/10">
+                {(["9", "10", "15"] as GameMode[]).map((mode) => (
+                  <button
+                    key={mode}
+                    onClick={() => setGameMode(mode)}
+                    className={`px-3 py-1 rounded text-sm font-bold transition-colors ${
+                      gameMode === mode 
+                        ? "bg-yellow-500 text-black" 
+                        : "text-zinc-400 hover:text-white hover:bg-white/10"
+                    }`}
+                  >
+                    {mode}-Ball
+                  </button>
+                ))}
+              </div>
+              
+              {/* Auto/Manual Toggle */}
+              <button
+                onClick={() => setIsAutoMode(!isAutoMode)}
+                className={`px-4 py-2 rounded-lg text-sm font-bold transition-all border ${
+                  isAutoMode
+                    ? "bg-green-600 border-green-500 text-white"
+                    : "bg-gray-800 border-gray-700 text-gray-400 hover:bg-gray-700 hover:text-white"
+                }`}
+                title="Press 'M' to toggle"
+              >
+                {isAutoMode ? "🤖 AUTO" : "✋ MANUAL"}
+              </button>
             </div>
           )}
         </div>
@@ -208,6 +279,12 @@ const LiveMatchPage = () => {
         <div className="absolute left-4 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center gap-4 bg-black/40 p-4 rounded-2xl backdrop-blur-sm border border-white/10">
           {ballNumbers.length > 0 ? (
             <>
+              {/* Detection Status Indicator */}
+              {isAutoMode && (
+                <div className="text-[10px] text-green-400 font-bold mb-1">
+                  {detectedBalls.length > 0 ? `🎯 ${detectedBalls.length} detected` : "⏳ Waiting..."}
+                </div>
+              )}
               <div className="flex flex-col space-y-2">
                 {ballNumbers.map((ballNumber) => (
                   <BilliardsBall
@@ -219,8 +296,12 @@ const LiveMatchPage = () => {
                   />
                 ))}
               </div>
-              <button onClick={handleResetBalls} className="text-xs uppercase font-bold text-white/10 hover:text-white/50 mt-2 transition-colors">
-                Reset
+              <button 
+                onClick={handleResetBalls} 
+                className="text-xs uppercase font-bold text-white/10 hover:text-white/50 mt-2 transition-colors"
+                disabled={isAutoMode}
+              >
+                {isAutoMode ? "Auto Mode" : "Reset"}
               </button>
             </>
           ) : (
