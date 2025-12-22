@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, RotateCw } from "lucide-react";
 import WinnerModal from "@/components/WinnerModal";
 import PlayerSelectionModal from "@/components/PlayerSelectionModal";
 import { db } from "@/src/lib/firebase";
@@ -275,105 +275,109 @@ const LiveMatchPage = () => {
           )}
         </div>
 
-        {/* Balls Sidebar */}
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 z-40 flex flex-col items-center gap-4 bg-black/40 p-4 rounded-2xl backdrop-blur-sm border border-white/10">
-          {ballNumbers.length > 0 ? (
-            <>
-              {/* Detection Status Indicator */}
-              {isAutoMode && (
-                <div className="text-[10px] text-green-400 font-bold mb-1">
-                  {detectedBalls.length > 0 ? `🎯 ${detectedBalls.length} detected` : "⏳ Waiting..."}
-                </div>
-              )}
-              <div className="flex flex-col space-y-2">
-                {ballNumbers.map((ballNumber) => (
-                  <BilliardsBall
-                    key={ballNumber}
-                    number={ballNumber}
-                    isMobile={true}
-                    isPocketed={pocketedBalls.has(ballNumber)}
-                    onClick={() => handleBallClick(ballNumber)}
-                  />
-                ))}
-              </div>
-              <button 
-                onClick={handleResetBalls} 
-                className="text-xs uppercase font-bold text-white/10 hover:text-white/50 mt-2 transition-colors"
-                disabled={isAutoMode}
-              >
-                {isAutoMode ? "Auto Mode" : "Reset"}
-              </button>
-            </>
-          ) : (
-            <div className="text-xs text-gray-500 font-mono py-4 w-10 text-center">
-              No balls
+        {/* Bottom Container - All UI elements synchronized */}
+        <div className="absolute bottom-0.5 left-0 right-0 z-40 flex flex-col items-center gap-0.5">
+          {/* Scoreboard Footer */}
+          <div className="w-full px-4 md:px-16">
+            <div className="bg-gradient-to-r from-purple-950/90 via-purple-900/90 to-purple-950/90 backdrop-blur-md shadow-2xl rounded-xl overflow-hidden">
+               <div className="flex items-center justify-between relative h-16">
+                  
+                  {/* Player 1 */}
+                  <button 
+                      onClick={() => setShowP1Modal(true)}
+                      className={`flex items-center gap-3 flex-1 text-left group pl-6`}
+                  >
+                      <div className={`w-12 h-12 rounded-full bg-gray-700 border-2 flex items-center justify-center text-xl font-bold transition-colors overflow-hidden p-0 ${currentTurn === 'player1' ? 'border-yellow-500' : 'border-white/20 group-hover:border-yellow-500'}`}>
+                          {player1.photoURL ? (
+                              <img src={player1.photoURL} alt={player1.name} className="w-full h-full object-cover" />
+                          ) : (
+                              player1.name.charAt(0)
+                          )}
+                      </div>
+                      <div>
+                          <h2 className="text-2xl font-bold uppercase tracking-wider text-white group-hover:text-yellow-500 transition-colors leading-none">{player1.name}</h2>
+                      </div>
+                  </button>
+
+                  {/* Center Scores */}
+                  <div className="flex items-center gap-6 px-6 border-x border-white/10 bg-black/20 h-full">
+                      <div className="text-5xl font-black tabular-nums leading-none text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.3)]">
+                          {player1Score}
+                      </div>
+                      
+                      <div className="flex flex-col items-center justify-center">
+                          <div className="text-xs font-bold text-white/50 uppercase tracking-[0.2em] mb-0.5">Race</div>
+                          <button 
+                              onClick={() => setRaceTo(r => Math.min(50, r + 1))}
+                              onContextMenu={(e) => { e.preventDefault(); setRaceTo(r => Math.max(1, r - 1)); }}
+                              className="text-xl font-bold text-white hover:text-yellow-500 transition-colors leading-none"
+                              title="Left Click (+), Right Click (-)"
+                          >
+                              {raceTo}
+                          </button>
+                      </div>
+
+                      <div className="text-5xl font-black tabular-nums leading-none text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.3)]">
+                          {player2Score}
+                      </div>
+                  </div>
+
+                  {/* Player 2 */}
+                  <button 
+                      onClick={() => setShowP2Modal(true)}
+                      className={`flex items-center gap-3 flex-1 justify-end text-right group pr-6`}
+                  >
+                      <div>
+                          <h2 className="text-2xl font-bold uppercase tracking-wider text-white group-hover:text-yellow-500 transition-colors leading-none">{player2.name}</h2>
+                      </div>
+                      <div className={`w-12 h-12 rounded-full bg-gray-700 border-2 flex items-center justify-center text-xl font-bold transition-colors overflow-hidden p-0 ${currentTurn === 'player2' ? 'border-yellow-500' : 'border-white/20 group-hover:border-yellow-500'}`}>
+                          {player2.photoURL ? (
+                              <img src={player2.photoURL} alt={player2.name} className="w-full h-full object-cover" />
+                          ) : (
+                              player2.name.charAt(0)
+                          )}
+                      </div>
+                  </button>
+
+               </div>
             </div>
-          )}
-        </div>
+          </div>
 
-        {/* Scoreboard Footer */}
-        <div className="absolute bottom-5 left-0 right-0 z-40 px-4 md:px-16">
-          <div className="bg-gradient-to-r from-purple-950/90 via-purple-900/90 to-purple-950/90 backdrop-blur-md shadow-2xl rounded-xl overflow-hidden">
-             <div className="flex items-center justify-between relative h-16">
-                
-                {/* Player 1 */}
-                <button 
-                    onClick={() => setShowP1Modal(true)}
-                    className={`flex items-center gap-3 flex-1 text-left group pl-6`}
-                >
-                    <div className={`w-12 h-12 rounded-full bg-gray-700 border-2 flex items-center justify-center text-xl font-bold transition-colors overflow-hidden ${currentTurn === 'player1' ? 'border-yellow-500' : 'border-white/20 group-hover:border-yellow-500'}`}>
-                        {player1.photoURL ? (
-                            <img src={player1.photoURL} alt={player1.name} className="w-full h-full object-cover" />
-                        ) : (
-                            player1.name.charAt(0)
-                        )}
-                    </div>
-                    <div>
-                        <h2 className="text-2xl font-bold uppercase tracking-wider text-white group-hover:text-yellow-500 transition-colors leading-none">{player1.name}</h2>
-                    </div>
-                </button>
-
-                {/* Center Scores */}
-                <div className="flex items-center gap-6 px-6 border-x border-white/10 bg-black/20 h-full">
-                    <div className="text-5xl font-black tabular-nums leading-none text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.3)]">
-                        {player1Score}
-                    </div>
-                    
-                    <div className="flex flex-col items-center justify-center">
-                        <div className="text-xs font-bold text-white/50 uppercase tracking-[0.2em] mb-0.5">Race</div>
-                        <button 
-                            onClick={() => setRaceTo(r => Math.min(50, r + 1))}
-                            onContextMenu={(e) => { e.preventDefault(); setRaceTo(r => Math.max(1, r - 1)); }}
-                            className="text-xl font-bold text-white hover:text-yellow-500 transition-colors leading-none"
-                            title="Left Click (+), Right Click (-)"
-                        >
-                            {raceTo}
-                        </button>
-                    </div>
-
-                    <div className="text-5xl font-black tabular-nums leading-none text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.3)]">
-                        {player2Score}
-                    </div>
+          {/* Balls - Horizontal at Bottom, Below Players UI */}
+          <div className="flex flex-col items-center gap-3 bg-black/40 px-4 py-0.5 rounded-2xl backdrop-blur-sm border border-white/10">
+            {ballNumbers.length > 0 ? (
+              <>
+                {/* Detection Status Indicator */}
+                {isAutoMode && (
+                  <div className="text-[10px] text-green-400 font-bold mb-1">
+                    {detectedBalls.length > 0 ? `🎯 ${detectedBalls.length} detected` : "⏳ Waiting..."}
+                  </div>
+                )}
+                <div className="flex flex-row items-center justify-center gap-2 flex-wrap max-w-4xl">
+                  {ballNumbers.map((ballNumber) => (
+                    <BilliardsBall
+                      key={ballNumber}
+                      number={ballNumber}
+                      isMobile={true}
+                      isPocketed={pocketedBalls.has(ballNumber)}
+                      onClick={() => handleBallClick(ballNumber)}
+                    />
+                  ))}
+                  <button 
+                    onClick={handleResetBalls} 
+                    className="p-1 text-white/10 hover:text-white/50 transition-colors ml-2 disabled:opacity-50"
+                    disabled={isAutoMode}
+                    title={isAutoMode ? "Auto Mode" : "Reset"}
+                  >
+                    <RotateCw size={16} />
+                  </button>
                 </div>
-
-                {/* Player 2 */}
-                <button 
-                    onClick={() => setShowP2Modal(true)}
-                    className={`flex items-center gap-3 flex-1 justify-end text-right group pr-6`}
-                >
-                    <div>
-                        <h2 className="text-2xl font-bold uppercase tracking-wider text-white group-hover:text-yellow-500 transition-colors leading-none">{player2.name}</h2>
-                    </div>
-                    <div className={`w-12 h-12 rounded-full bg-gray-700 border-2 flex items-center justify-center text-xl font-bold transition-colors overflow-hidden ${currentTurn === 'player2' ? 'border-yellow-500' : 'border-white/20 group-hover:border-yellow-500'}`}>
-                        {player2.photoURL ? (
-                            <img src={player2.photoURL} alt={player2.name} className="w-full h-full object-cover" />
-                        ) : (
-                            player2.name.charAt(0)
-                        )}
-                    </div>
-                </button>
-
-             </div>
+              </>
+            ) : (
+              <div className="text-xs text-gray-500 font-mono py-4 text-center">
+                No balls
+              </div>
+            )}
           </div>
         </div>
 
