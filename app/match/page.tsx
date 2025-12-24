@@ -221,7 +221,7 @@ const LiveMatchPage = () => {
           alt="PSGB Logo"
           width={120}
           height={120}
-          className="rounded-lg shadow-lg"
+          className="rounded-full shadow-lg"
         />
       </div>
 
@@ -277,69 +277,69 @@ const LiveMatchPage = () => {
 
         {/* Bottom Container - All UI elements synchronized */}
         <div className="absolute bottom-0.5 left-0 right-0 z-40 flex flex-col items-center gap-0.5">
-          {/* Scoreboard Footer */}
+        {/* Scoreboard Footer */}
           <div className="w-full px-4 md:px-16">
-            <div className="bg-gradient-to-r from-purple-950/90 via-purple-900/90 to-purple-950/90 backdrop-blur-md shadow-2xl rounded-xl overflow-hidden">
-               <div className="flex items-center justify-between relative h-16">
-                  
-                  {/* Player 1 */}
-                  <button 
-                      onClick={() => setShowP1Modal(true)}
-                      className={`flex items-center gap-3 flex-1 text-left group pl-6`}
-                  >
+          <div className="bg-gradient-to-r from-purple-950/90 via-purple-900/90 to-purple-950/90 backdrop-blur-md shadow-2xl rounded-xl overflow-hidden">
+             <div className="flex items-center justify-between relative h-16">
+                
+                {/* Player 1 */}
+                <button 
+                    onClick={() => setShowP1Modal(true)}
+                    className={`flex items-center gap-3 flex-1 text-left group pl-6`}
+                >
                       <div className={`w-12 h-12 rounded-full bg-gray-700 border-2 flex items-center justify-center text-xl font-bold transition-colors overflow-hidden p-0 ${currentTurn === 'player1' ? 'border-yellow-500' : 'border-white/20 group-hover:border-yellow-500'}`}>
-                          {player1.photoURL ? (
-                              <img src={player1.photoURL} alt={player1.name} className="w-full h-full object-cover" />
-                          ) : (
-                              player1.name.charAt(0)
-                          )}
-                      </div>
-                      <div>
-                          <h2 className="text-2xl font-bold uppercase tracking-wider text-white group-hover:text-yellow-500 transition-colors leading-none">{player1.name}</h2>
-                      </div>
-                  </button>
+                        {player1.photoURL ? (
+                            <img src={player1.photoURL} alt={player1.name} className="w-full h-full object-cover" />
+                        ) : (
+                            player1.name.charAt(0)
+                        )}
+                    </div>
+                    <div>
+                        <h2 className="text-2xl font-bold uppercase tracking-wider text-white group-hover:text-yellow-500 transition-colors leading-none">{player1.name}</h2>
+                    </div>
+                </button>
 
-                  {/* Center Scores */}
-                  <div className="flex items-center gap-6 px-6 border-x border-white/10 bg-black/20 h-full">
-                      <div className="text-5xl font-black tabular-nums leading-none text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.3)]">
-                          {player1Score}
-                      </div>
-                      
-                      <div className="flex flex-col items-center justify-center">
-                          <div className="text-xs font-bold text-white/50 uppercase tracking-[0.2em] mb-0.5">Race</div>
-                          <button 
-                              onClick={() => setRaceTo(r => Math.min(50, r + 1))}
-                              onContextMenu={(e) => { e.preventDefault(); setRaceTo(r => Math.max(1, r - 1)); }}
-                              className="text-xl font-bold text-white hover:text-yellow-500 transition-colors leading-none"
-                              title="Left Click (+), Right Click (-)"
-                          >
-                              {raceTo}
-                          </button>
-                      </div>
+                {/* Center Scores */}
+                <div className="flex items-center gap-6 px-6 border-x border-white/10 bg-black/20 h-full">
+                    <div className="text-5xl font-black tabular-nums leading-none text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.3)]">
+                        {player1Score}
+                    </div>
+                    
+                    <div className="flex flex-col items-center justify-center">
+                        <div className="text-xs font-bold text-white/50 uppercase tracking-[0.2em] mb-0.5">Race</div>
+                        <button 
+                            onClick={() => setRaceTo(r => Math.min(50, r + 1))}
+                            onContextMenu={(e) => { e.preventDefault(); setRaceTo(r => Math.max(1, r - 1)); }}
+                            className="text-xl font-bold text-white hover:text-yellow-500 transition-colors leading-none"
+                            title="Left Click (+), Right Click (-)"
+                        >
+                            {raceTo}
+                        </button>
+                    </div>
 
-                      <div className="text-5xl font-black tabular-nums leading-none text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.3)]">
-                          {player2Score}
-                      </div>
-                  </div>
+                    <div className="text-5xl font-black tabular-nums leading-none text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.3)]">
+                        {player2Score}
+                    </div>
+                </div>
 
-                  {/* Player 2 */}
-                  <button 
-                      onClick={() => setShowP2Modal(true)}
-                      className={`flex items-center gap-3 flex-1 justify-end text-right group pr-6`}
-                  >
-                      <div>
-                          <h2 className="text-2xl font-bold uppercase tracking-wider text-white group-hover:text-yellow-500 transition-colors leading-none">{player2.name}</h2>
-                      </div>
+                {/* Player 2 */}
+                <button 
+                    onClick={() => setShowP2Modal(true)}
+                    className={`flex items-center gap-3 flex-1 justify-end text-right group pr-6`}
+                >
+                    <div>
+                        <h2 className="text-2xl font-bold uppercase tracking-wider text-white group-hover:text-yellow-500 transition-colors leading-none">{player2.name}</h2>
+                    </div>
                       <div className={`w-12 h-12 rounded-full bg-gray-700 border-2 flex items-center justify-center text-xl font-bold transition-colors overflow-hidden p-0 ${currentTurn === 'player2' ? 'border-yellow-500' : 'border-white/20 group-hover:border-yellow-500'}`}>
-                          {player2.photoURL ? (
-                              <img src={player2.photoURL} alt={player2.name} className="w-full h-full object-cover" />
-                          ) : (
-                              player2.name.charAt(0)
-                          )}
-                      </div>
-                  </button>
+                        {player2.photoURL ? (
+                            <img src={player2.photoURL} alt={player2.name} className="w-full h-full object-cover" />
+                        ) : (
+                            player2.name.charAt(0)
+                        )}
+                    </div>
+                </button>
 
-               </div>
+             </div>
             </div>
           </div>
 

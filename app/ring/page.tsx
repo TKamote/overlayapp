@@ -321,7 +321,7 @@ const RingGamePage = () => {
           alt="PSGB Logo"
           width={120}
           height={120}
-          className="rounded-lg shadow-lg"
+          className="rounded-full shadow-lg"
         />
       </div>
 
@@ -379,139 +379,139 @@ const RingGamePage = () => {
           {/* Race To Pill */}
           <div className="flex items-center justify-center">
             <div className="bg-black/60 backdrop-blur-md border border-white/10 rounded-full px-6 py-0.5 flex items-center gap-3">
-              <span className="text-sm font-bold text-white/70 uppercase tracking-widest">Ring Game • Race to</span>
-              <div className="flex items-center gap-2">
-                <button 
-                  onClick={() => setRaceTo(Math.max(1, raceTo - 1))}
-                  className="text-white/50 hover:text-white text-lg font-bold px-2"
-                >-</button>
-                <span className="text-2xl font-black text-yellow-500">{raceTo}</span>
-                <button 
-                  onClick={() => setRaceTo(Math.min(50, raceTo + 1))}
-                  className="text-white/50 hover:text-white text-lg font-bold px-2"
-                >+</button>
-              </div>
+                <span className="text-sm font-bold text-white/70 uppercase tracking-widest">Ring Game • Race to</span>
+                <div className="flex items-center gap-2">
+                    <button 
+                        onClick={() => setRaceTo(Math.max(1, raceTo - 1))}
+                        className="text-white/50 hover:text-white text-lg font-bold px-2"
+                    >-</button>
+                    <span className="text-2xl font-black text-yellow-500">{raceTo}</span>
+                    <button 
+                        onClick={() => setRaceTo(Math.min(50, raceTo + 1))}
+                        className="text-white/50 hover:text-white text-lg font-bold px-2"
+                    >+</button>
+                </div>
             </div>
-          </div>
+        </div>
 
-          {/* Scoreboard Footer - 3 Players */}
+        {/* Scoreboard Footer - 3 Players */}
           <div className="w-full px-4 md:px-16">
-            <div className="bg-gradient-to-r from-purple-950/90 via-purple-900/90 to-purple-950/90 backdrop-blur-md shadow-2xl rounded-xl overflow-hidden">
-               <div className="grid grid-cols-3 h-16">
-                  
-                  {/* Player 1 */}
-                  <div className={`relative flex flex-col items-center justify-center group border-r border-white/30 ${getPlayerStatus("p1") ? 'bg-white/5' : ''}`}>
-                      <div className="flex items-center gap-4 w-full px-4">
-                          <button 
-                              onClick={() => setModalOpen("p1")}
+          <div className="bg-gradient-to-r from-purple-950/90 via-purple-900/90 to-purple-950/90 backdrop-blur-md shadow-2xl rounded-xl overflow-hidden">
+             <div className="grid grid-cols-3 h-16">
+                
+                {/* Player 1 */}
+                <div className={`relative flex flex-col items-center justify-center group border-r border-white/30 ${getPlayerStatus("p1") ? 'bg-white/5' : ''}`}>
+                    <div className="flex items-center gap-4 w-full px-4">
+                        <button 
+                            onClick={() => setModalOpen("p1")}
                               className={`w-12 h-12 rounded-full bg-gray-700 border-2 flex items-center justify-center text-lg font-bold transition-colors overflow-hidden shrink-0 p-0 ${getPlayerStatus("p1") ? 'border-yellow-500' : 'border-white/20 hover:border-yellow-500'}`}
-                          >
-                              {player1.photoURL ? (
-                                  <img src={player1.photoURL} alt={player1.name} className="w-full h-full object-cover" />
-                              ) : (
-                                  player1.name.charAt(0)
-                              )}
-                          </button>
-                          <div className="flex-1 min-w-0">
-                              <h2 className={`text-lg font-bold uppercase tracking-wider truncate leading-none ${getPlayerStatus("p1") ? 'text-white' : 'text-white/40'}`}>{player1.name}</h2>
-                              {getPlayerStatus("p1") && (
-                                  <div className="text-[10px] font-bold px-1.5 py-0.5 rounded mt-0.5 leading-none inline-block bg-yellow-500 text-black">
-                                      PLAYING
-                                  </div>
-                              )}
-                          </div>
-                          {/* Score */}
-                          <div className="flex flex-col items-center shrink-0">
-                              <button 
-                                  onClick={() => setP1Score(s => s + 1)}
-                                  onContextMenu={(e) => { e.preventDefault(); setP1Score(s => Math.max(0, s - 1)); }}
-                                  className={`text-4xl font-black leading-none hover:scale-110 transition-transform ${
-                                      getPlayerStatus("p1") 
-                                          ? "text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.3)]" 
-                                          : "text-yellow-400/30"
-                                  }`}
-                              >
-                                  {p1Score}
-                              </button>
-                          </div>
-                      </div>
-                  </div>
+                        >
+                            {player1.photoURL ? (
+                                <img src={player1.photoURL} alt={player1.name} className="w-full h-full object-cover" />
+                            ) : (
+                                player1.name.charAt(0)
+                            )}
+                        </button>
+                        <div className="flex-1 min-w-0">
+                            <h2 className={`text-lg font-bold uppercase tracking-wider truncate leading-none ${getPlayerStatus("p1") ? 'text-white' : 'text-white/40'}`}>{player1.name}</h2>
+                            {getPlayerStatus("p1") && (
+                                <div className="text-[10px] font-bold px-1.5 py-0.5 rounded mt-0.5 leading-none inline-block bg-yellow-500 text-black">
+                                    PLAYING
+                                </div>
+                            )}
+                        </div>
+                        {/* Score */}
+                        <div className="flex flex-col items-center shrink-0">
+                            <button 
+                                onClick={() => setP1Score(s => s + 1)}
+                                onContextMenu={(e) => { e.preventDefault(); setP1Score(s => Math.max(0, s - 1)); }}
+                                className={`text-4xl font-black leading-none hover:scale-110 transition-transform ${
+                                    getPlayerStatus("p1") 
+                                        ? "text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.3)]" 
+                                        : "text-yellow-400/30"
+                                }`}
+                            >
+                                {p1Score}
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-                  {/* Player 2 */}
-                  <div className={`relative flex flex-col items-center justify-center group border-r border-white/30 ${getPlayerStatus("p2") ? 'bg-white/5' : ''}`}>
-                      <div className="flex items-center gap-4 w-full px-4">
-                          <button 
-                              onClick={() => setModalOpen("p2")}
+                {/* Player 2 */}
+                <div className={`relative flex flex-col items-center justify-center group border-r border-white/30 ${getPlayerStatus("p2") ? 'bg-white/5' : ''}`}>
+                    <div className="flex items-center gap-4 w-full px-4">
+                        <button 
+                            onClick={() => setModalOpen("p2")}
                               className={`w-12 h-12 rounded-full bg-gray-700 border-2 flex items-center justify-center text-lg font-bold transition-colors overflow-hidden shrink-0 p-0 ${getPlayerStatus("p2") ? 'border-yellow-500' : 'border-white/20 hover:border-yellow-500'}`}
-                          >
-                              {player2.photoURL ? (
-                                  <img src={player2.photoURL} alt={player2.name} className="w-full h-full object-cover" />
-                              ) : (
-                                  player2.name.charAt(0)
-                              )}
-                          </button>
-                          <div className="flex-1 min-w-0">
-                              <h2 className={`text-lg font-bold uppercase tracking-wider truncate leading-none ${getPlayerStatus("p2") ? 'text-white' : 'text-white/40'}`}>{player2.name}</h2>
-                              {getPlayerStatus("p2") && (
-                                  <div className="text-[10px] font-bold px-1.5 py-0.5 rounded mt-0.5 leading-none inline-block bg-yellow-500 text-black">
-                                      PLAYING
-                                  </div>
-                              )}
-                          </div>
-                          <div className="flex flex-col items-center shrink-0">
-                              <button 
-                                  onClick={() => setP2Score(s => s + 1)}
-                                  onContextMenu={(e) => { e.preventDefault(); setP2Score(s => Math.max(0, s - 1)); }}
-                                  className={`text-4xl font-black leading-none hover:scale-110 transition-transform ${
-                                      getPlayerStatus("p2") 
-                                          ? "text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.3)]" 
-                                          : "text-yellow-400/30"
-                                  }`}
-                              >
-                                  {p2Score}
-                              </button>
-                          </div>
-                      </div>
-                  </div>
+                        >
+                            {player2.photoURL ? (
+                                <img src={player2.photoURL} alt={player2.name} className="w-full h-full object-cover" />
+                            ) : (
+                                player2.name.charAt(0)
+                            )}
+                        </button>
+                        <div className="flex-1 min-w-0">
+                            <h2 className={`text-lg font-bold uppercase tracking-wider truncate leading-none ${getPlayerStatus("p2") ? 'text-white' : 'text-white/40'}`}>{player2.name}</h2>
+                            {getPlayerStatus("p2") && (
+                                <div className="text-[10px] font-bold px-1.5 py-0.5 rounded mt-0.5 leading-none inline-block bg-yellow-500 text-black">
+                                    PLAYING
+                                </div>
+                            )}
+                        </div>
+                        <div className="flex flex-col items-center shrink-0">
+                            <button 
+                                onClick={() => setP2Score(s => s + 1)}
+                                onContextMenu={(e) => { e.preventDefault(); setP2Score(s => Math.max(0, s - 1)); }}
+                                className={`text-4xl font-black leading-none hover:scale-110 transition-transform ${
+                                    getPlayerStatus("p2") 
+                                        ? "text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.3)]" 
+                                        : "text-yellow-400/30"
+                                }`}
+                            >
+                                {p2Score}
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-                  {/* Player 3 */}
-                  <div className={`relative flex flex-col items-center justify-center group ${getPlayerStatus("p3") ? 'bg-white/5' : ''}`}>
-                      <div className="flex items-center gap-4 w-full px-4">
-                          <button 
-                              onClick={() => setModalOpen("p3")}
+                {/* Player 3 */}
+                <div className={`relative flex flex-col items-center justify-center group ${getPlayerStatus("p3") ? 'bg-white/5' : ''}`}>
+                    <div className="flex items-center gap-4 w-full px-4">
+                        <button 
+                            onClick={() => setModalOpen("p3")}
                               className={`w-12 h-12 rounded-full bg-gray-700 border-2 flex items-center justify-center text-lg font-bold transition-colors overflow-hidden shrink-0 p-0 ${getPlayerStatus("p3") ? 'border-yellow-500' : 'border-white/20 hover:border-yellow-500'}`}
-                          >
-                              {player3.photoURL ? (
-                                  <img src={player3.photoURL} alt={player3.name} className="w-full h-full object-cover" />
-                              ) : (
-                                  player3.name.charAt(0)
-                              )}
-                          </button>
-                          <div className="flex-1 min-w-0">
-                              <h2 className={`text-lg font-bold uppercase tracking-wider truncate leading-none ${getPlayerStatus("p3") ? 'text-white' : 'text-white/40'}`}>{player3.name}</h2>
-                              {getPlayerStatus("p3") && (
-                                  <div className="text-[10px] font-bold px-1.5 py-0.5 rounded mt-0.5 leading-none inline-block bg-yellow-500 text-black">
-                                      PLAYING
-                                  </div>
-                              )}
-                          </div>
-                          <div className="flex flex-col items-center shrink-0">
-                              <button 
-                                  onClick={() => setP3Score(s => s + 1)}
-                                  onContextMenu={(e) => { e.preventDefault(); setP3Score(s => Math.max(0, s - 1)); }}
-                                  className={`text-4xl font-black leading-none hover:scale-110 transition-transform ${
-                                      getPlayerStatus("p3") 
-                                          ? "text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.3)]" 
-                                          : "text-yellow-400/30"
-                                  }`}
-                              >
-                                  {p3Score}
-                              </button>
-                          </div>
-                      </div>
-                  </div>
+                        >
+                            {player3.photoURL ? (
+                                <img src={player3.photoURL} alt={player3.name} className="w-full h-full object-cover" />
+                            ) : (
+                                player3.name.charAt(0)
+                            )}
+                        </button>
+                        <div className="flex-1 min-w-0">
+                            <h2 className={`text-lg font-bold uppercase tracking-wider truncate leading-none ${getPlayerStatus("p3") ? 'text-white' : 'text-white/40'}`}>{player3.name}</h2>
+                            {getPlayerStatus("p3") && (
+                                <div className="text-[10px] font-bold px-1.5 py-0.5 rounded mt-0.5 leading-none inline-block bg-yellow-500 text-black">
+                                    PLAYING
+                                </div>
+                            )}
+                        </div>
+                        <div className="flex flex-col items-center shrink-0">
+                            <button 
+                                onClick={() => setP3Score(s => s + 1)}
+                                onContextMenu={(e) => { e.preventDefault(); setP3Score(s => Math.max(0, s - 1)); }}
+                                className={`text-4xl font-black leading-none hover:scale-110 transition-transform ${
+                                    getPlayerStatus("p3") 
+                                        ? "text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.3)]" 
+                                        : "text-yellow-400/30"
+                                }`}
+                            >
+                                {p3Score}
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-               </div>
+             </div>
             </div>
           </div>
 
